@@ -90,7 +90,7 @@ resource "aws_lb_listener" "demo_listener" {
 
 resource "aws_autoscaling_group" "demo_asg" {
   desired_capacity     = 1
-  max_size             = 2
+  max_size             = 3
   min_size             = 1
   vpc_zone_identifier  = data.aws_subnets.default.ids
   target_group_arns    = [aws_lb_target_group.demo_tg.arn]
@@ -119,8 +119,8 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high" {
   namespace           = "AWS/EC2"
   period              = 60
   statistic           = "Average"
-  threshold           = 50
-  alarm_description   = "Scale up if CPU > 50%"
+  threshold           = 30
+  alarm_description   = "Scale up if CPU > 30%"
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.demo_asg.name
   }
