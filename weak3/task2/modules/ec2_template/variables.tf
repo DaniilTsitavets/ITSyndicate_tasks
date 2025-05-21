@@ -11,3 +11,8 @@ variable "ec2_instance_type" {
 variable "ec2_sg" {
   type = string
 }
+
+variable "path_to_user_data" {
+  description = "Path to user-data script file"
+  type = string
+}
