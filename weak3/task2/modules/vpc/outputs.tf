@@ -4,5 +4,6 @@ output "vpc_id" {
 }
 
 output "public_subnets" {
+  description = "List of public subnets"
   value = [for s in aws_subnet.public_subnet : s.id]
 }

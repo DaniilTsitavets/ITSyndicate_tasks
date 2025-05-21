@@ -8,5 +8,6 @@ variable "public_subnets" {
 }
 
 variable "alb_sg" {
+  description = "ALB security group with inbound 80 port"
   type = string
 }
