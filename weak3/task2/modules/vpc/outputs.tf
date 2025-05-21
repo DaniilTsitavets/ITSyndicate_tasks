@@ -1,4 +1,8 @@
-output "instance_public_ip" {
-  value = ""                                          # The actual value to be outputted
-  description = "The public IP address of the EC2 instance" # Description of what this output represents
+output "vpc_id" {
+  description = "Vpc id"
+  value = aws_vpc.task2_vpc.id
+}
+
+output "public_subnets" {
+  value = [for s in aws_subnet.public_subnet : s.id]
 }
