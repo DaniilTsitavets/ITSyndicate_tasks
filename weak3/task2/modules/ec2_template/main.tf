@@ -3,7 +3,7 @@ resource "aws_launch_template" "demo_lt" {
   image_id      = var.ec2_ami_id
   instance_type = var.ec2_instance_type
 
-  user_data = base64encode(file("../../user_data/user-data.sh"))
+  user_data = base64encode(file(var.path_to_user_data))
 
   network_interfaces {
     associate_public_ip_address = true
