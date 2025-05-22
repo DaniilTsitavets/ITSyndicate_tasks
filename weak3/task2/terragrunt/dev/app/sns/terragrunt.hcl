@@ -7,5 +7,4 @@ terraform {
 }
 
 inputs = {
-  alert_email = []
-}
+  al
