@@ -24,4 +24,5 @@ inputs = {
   max_capacity_alb     = 2
   public_subnets       = dependency.vpc.outputs.public_subnets
   target_group_arn     = dependency.alb.outputs.target_group_arn
-  launch_template_id   = dependency.ec2_template
+  launch_template_id   = dependency.ec2_template.outputs.lt_id
+}

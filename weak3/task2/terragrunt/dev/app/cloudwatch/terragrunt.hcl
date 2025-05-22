@@ -17,4 +17,5 @@ terraform {
 inputs = {
   scale_up_threshold = 50
   asg_name           = dependency.asg.outputs.asg_name
-  scale_up_sns_topic = dependency.sns.o
+  scale_up_sns_topic = dependency.sns.outputs.sns_arn
+}

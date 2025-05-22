@@ -11,4 +11,5 @@ terraform {
 }
 
 inputs = {
-  vpc_id = dependency.v
+  vpc_id = dependency.vpc.outputs.vpc_id
+}
