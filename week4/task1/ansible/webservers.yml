@@ -1,0 +1,7 @@
+---
+- name: Deploy django app
+  hosts: app
+  become: true
+  remote_user: ubuntu
+  roles:
+    - webserver-setup
