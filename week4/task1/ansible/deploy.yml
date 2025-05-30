@@ -1,0 +1,7 @@
+---
+- name: Pull last changes from repository
+  hosts: app
+  become: true
+  remote_user: ubuntu
+  roles:
+    - deploy

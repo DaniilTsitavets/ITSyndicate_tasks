@@ -1,0 +1,12 @@
+---
+- name: Install dependencies for deployment
+  apt:
+    name:
+      - nginx
+      - python3
+      - python3-pip
+      - python3-venv
+      - libpq-dev
+      - build-essential
+      - git
+    update_cache: true

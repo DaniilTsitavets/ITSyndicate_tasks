@@ -1,0 +1,32 @@
+---
+- name: Ensure PostgreSQL is started
+  service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Create DB user
+  become_user: postgres
+  postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    state: present
+
+- name: Create DB
+  become_user: postgres
+  postgresql_db:
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+
+- name: Configure listen_addresses in postgresql.conf
+  lineinfile:
+    path: /etc/postgresql/14/main/postgresql.conf
+    regexp: '^#?listen_addresses'
+    line: "listen_addresses = '*'"
+
+- name: Allow access in pg_hba.conf
+  lineinfile:
+    path: /etc/postgresql/14/main/pg_hba.conf
+    line: "host    all           all           {{ vpc_cidr_block }}           md5"
+    insertafter: EOF
+  notify: restart PostgreSQL
