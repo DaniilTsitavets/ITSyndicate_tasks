@@ -1,5 +1,5 @@
 module "vpc" {
-  source = "modules/vpc"
+  source = "./modules/vpc"
 
   vpc_cidr_block = "10.0.0.0/16"
   azs = ["eu-north-1a", "eu-north-1b"]
@@ -11,20 +11,20 @@ module "vpc" {
 }
 
 module "s3" {
-  source = "modules/s3"
+  source = "./modules/s3"
 }
 
 module "sg" {
-  source = "modules/sg"
+  source = "./modules/sg"
   vpc_id = module.vpc.vpc_id
 }
 
 module "secrets" {
-  source = "modules/secrets"
+  source = "./modules/secrets"
 }
 
 module "rds" {
-  source               = "modules/rds"
+  source               = "./modules/rds"
   db_name              = module.secrets.db_name
   db_password          = module.secrets.db_password
   db_subnet_group_name = module.vpc.db_subnet_group_name
@@ -35,12 +35,12 @@ module "rds" {
 }
 
 module "iam" {
-  source = "modules/iam"
+  source = "./modules/iam"
   bucket_arn = module.s3.bucket_arn
 }
 
 module "ec2" {
-  source                    = "modules/ec2"
+  source                    = "./modules/ec2"
   ec2_sg                    = module.sg.ec2_sg_id
   iam_instance_profile_name = module.iam.iam_instance_profile_name
   private_subnet_id         = module.vpc.private_subnet_ids[0]
@@ -50,7 +50,7 @@ module "ec2" {
 }
 
 module "alb" {
-  source = "modules/alb"
+  source = "./modules/alb"
   alb_sg_id = module.sg.alb_sg_id
   ec2_instance_ids = module.ec2.ec2_instance_ids
   public_subnets = module.vpc.public_subnet_ids
@@ -58,6 +58,6 @@ module "alb" {
 }
 
 module "waf" {
-  source = "modules/waf"
+  source = "./modules/waf"
   alb_arn = module.alb.alb_arn
 }
