@@ -1,0 +1,37 @@
+replicaCount: 1
+image:
+    repository: 913524929706.dkr.ecr.eu-north-1.amazonaws.com/itsyndicate/week8
+    tag: latest
+containerPort: 8000
+host: back2.cloud
+certManager:
+    enabled: true
+    email: ex@gmail.com
+    privateKeySecret: letsencrypt-prod
+    clusterIssuerName: letsencrypt-prod
+config:
+    allowedHosts: '*'
+secrets:
+    databaseUrl: ENC[AES256_GCM,data:HLPuson0ImjFRqwl86KKR87DVDlVHxfNWdTCl4wmNBwJMNnqe2YzfZxFCOBzwvYhMw3DQ4fFHsOED4tu8LDAiUvZfvsNWYJvLj/9R7GAm/3FCBXJHvO2dVbnUIkwGpNdauloJ1HZnHq0MytB9LhtccxphEYLyPI55XHlYGic,iv:Hal1QG4drh/d6YcDr1UtKgUzDNnTIHBKIW5FCYdlkYI=,tag:WeLvfeRTxfa0n/tjyjIQQg==,type:str]
+    username: ENC[AES256_GCM,data:itjnygO63T7S,iv:SSzQatu/70nvHG1GgVBbSqe68uW6laFZv4Sm460FWnk=,tag:c+pRL+uKik1ayI9/tYk7BA==,type:str]
+    password: ENC[AES256_GCM,data:+P7S5SLodXw=,iv:WwPz4nWiidvJ/98Qw3rqfpUW8+idYGAjNKRKa1ikaEU=,tag:kKLVTQmkm5h8IUg+DLQ63Q==,type:str]
+    secretKey: ENC[AES256_GCM,data:EB2AiZPYOSmy,iv:McILbkB5KPdHvJSYOQ+Pa8myzVZrc13WwlvzzTjoFKc=,tag:Rphlc8BHS0kDQrrKvYgRJg==,type:str]
+hpa:
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 80
+sops:
+    age:
+        - recipient: age1ts0ykttetm8frdxsstt8jktjc8hmpy2fkj0e0zxml0j4cwx0hy8s03sz94
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBndWNsbDBvVGwyWUUvWEd4
+            amlYdlpWRGl2SDVIU2dRaFl4RmJWaTBwM2dVCjF0SmJNZHVzS0FYUS9lSTVvakc4
+            anhENTd3ZVcrbHROVXhUYVlSa1lLMTAKLS0tIGZZUVVCZGVpVFQyU21pWWtjMStB
+            cUNmam1OTmd5SnlqZ1FDT2hPbzBpSXMKaMbLip+aIX8slhh8U4ibJlSWJYQPHRCY
+            d+hFFrsONqNt3cmAX+4C6T0po8tWDgIHLFMtaYBE13zc9t2FvKuf4A==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-06-26T11:08:37Z"
+    mac: ENC[AES256_GCM,data:vg4BUrcmr/EaAXhFABX4wuKm0c7crNm5C5tPc6qcGy1q8404Xi/KMOO3YKXiog5jRLoGG1qKxEEGXB3rhrhj86wSDkXca5+Rq2O+bkP9tadFaujADhwEWzUjs2L7zCZkpm45jv93X/LbPKt6rXWdkaDg6DcCFer/QpARY9rmwls=,iv:fgb8K4R8Xzer7bQ6hJHgEoNSQSHLpU8zAtzwiltYO+w=,tag:3x5tfv8YJmlFwFBVmQjjhg==,type:str]
+    encrypted_regex: ^(databaseUrl|username|password|secretKey)$
+    version: 3.10.2

@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "project.name" . }}-deployment
+  labels:
+    app: {{ include "project.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "project.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "project.name" . }}
+    spec:
+      initContainers:
+        - name: {{ include "project.name" . }}-collectstatic-init-container
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: Always
+          command: ["python", "manage.py", "collectstatic", "--noinput"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: static-volume
+              mountPath: /app/staticfiles
+          envFrom:
+            - secretRef:
+                name: {{ include "project.name" . }}-secret
+            - configMapRef:
+                 name: {{ include "project.name" . }}-configmap
+      containers:
+        - name: {{ include "project.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 0
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          envFrom:
+            - secretRef:
+                name: {{ include "project.name" . }}-secret
+            - configMapRef:
+                name: {{ include "project.name" . }}-configmap
+          volumeMounts:
+            - name: static-volume
+              mountPath: /app/staticfiles
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 5
+
+      volumes:
+        - name: static-volume
+          persistentVolumeClaim:
+            claimName: {{ include "project.name" . }}-pvc
