@@ -1,0 +1,21 @@
+replicaCount: 1
+image:
+    repository: 913524929706.dkr.ecr.eu-north-1.amazonaws.com/itsyndicate/weeks
+    tag: latest
+containerPort: 8000
+host: back2.cloud
+networkPolicy:
+    dbCidr: 10.5.5.5/24 #define
+    dbPort: 5432
+certManager:
+    enabled: false
+    email: ex@gmail.com
+    privateKeySecret: letsencrypt-prod
+    clusterIssuerName: letsencrypt-prod
+config:
+    allowedHosts: '*'
+hpa:
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+
