@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "project.name" . }}-networkpolicy
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "project.name" . }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx  # define it with k label ns ingress-nginx name=ingress-nginx
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: {{ .Values.containerPort}}
+  egress:
+    - to:
+        - ipBlock:
+            cidr: {{ .Values.networkPolicy.dbCidr }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.networkPolicy.dbPort }}
