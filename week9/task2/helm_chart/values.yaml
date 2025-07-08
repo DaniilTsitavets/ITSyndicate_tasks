@@ -1,0 +1,12 @@
+replicaCount: 1
+image:
+    repository: 913524929706.dkr.ecr.eu-north-1.amazonaws.com/itsyndicate/weeks
+    tag: latest
+containerPort: 8000
+config:
+    allowedHosts: '*'
+hpa:
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+
