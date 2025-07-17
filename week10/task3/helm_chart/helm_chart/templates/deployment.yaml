@@ -1,0 +1,55 @@
+{{- if and .Values.image.repository .Values.image.tag }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "project.name" . }}-deployment
+  labels:
+    app: {{ include "project.name" . }}
+spec:
+  {{- if not .Values.hpa.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ include "project.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "project.name" . }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: {{ include "project.name" . }}-sa
+      containers:
+        - name: {{ include "project.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "project.name" . }}-configmap
+            - secretRef:
+                name: {{ include "project.name" . }}-secret
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 5
+{{- end }}

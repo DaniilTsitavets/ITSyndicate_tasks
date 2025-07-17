@@ -1,0 +1,53 @@
+suite: Test Django Helm Chart
+
+tests:
+  - it: should render all templates
+    templates:
+      - deployment.yaml
+      - hpa.yaml
+      - ingress.yaml
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have valid deployment with required fields
+    templates:
+      - deployment.yaml
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: metadata.name
+          pattern: ^[a-z0-9-]+$
+
+  - it: should not set replicas when HPA is enabled
+    templates:
+      - deployment.yaml
+    set:
+      hpa:
+        enabled: true
+    asserts:
+      - notExists:
+          path: spec.replicas
+
+  - it: should not render ingress when disabled
+    templates:
+      - ingress.yaml
+    set:
+      ingress:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should require image.repository to render image field correctly
+    templates:
+      - deployment.yaml
+    set:
+      image:
+        repository: ""
+        tag: latest
+    asserts:
+      - notMatchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: ".+:.+"
