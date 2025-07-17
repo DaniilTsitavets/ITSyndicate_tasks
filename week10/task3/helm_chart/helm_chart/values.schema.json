@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of replicas for the deployment"
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      },
+      "required": ["repository", "tag"]
+    },
+    "containerPort": {
+      "type": "integer"
+    },
+    "secrets": {
+      "type": "object",
+      "properties": {
+        "databaseUrl": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "secretKey": { "type": "string" }
+      }
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "allowedHosts": { "type": "string" }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" }
+      }
+    },
+    "hpa": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minReplicas": { "type": "integer" },
+        "maxReplicas": { "type": "integer" },
+        "targetCPUUtilizationPercentage": { "type": "integer" }
+      }
+    }
+  },
+  "required": ["replicaCount", "image", "containerPort"]
+}

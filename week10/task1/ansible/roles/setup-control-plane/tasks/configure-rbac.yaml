@@ -1,0 +1,23 @@
+---
+- name: Copy admin.kubeconfig
+  ansible.builtin.copy:
+    src: "{{ configs_files_path }}/admin.kubeconfig"
+    dest: /tmp
+    mode: '0644'
+
+- name: Add kube-apiserver-to-kubelet.yaml
+  ansible.builtin.template:
+    src: kube-apiserver-to-kubelet.yaml.j2
+    dest: /tmp/kube-apiserver-to-kubelet.yaml
+    mode: '0644'
+
+- name: Apply kube-apiserver-to-kubelet manifest to the cluster.
+  kubernetes.core.k8s:
+    kubeconfig: /tmp/admin.kubeconfig
+    state: present
+    src: /tmp/kube-apiserver-to-kubelet.yaml
+
+- name: Remove admin.kubeconfig
+  ansible.builtin.file:
+    path: /tmp/admin.kubeconfig
+    state: absent

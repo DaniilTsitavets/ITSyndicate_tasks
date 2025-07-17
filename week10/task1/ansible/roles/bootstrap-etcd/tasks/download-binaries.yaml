@@ -1,0 +1,24 @@
+---
+- name: Download and untar etcd
+  ansible.builtin.unarchive:
+    src: https://github.com/etcd-io/etcd/releases/download/v3.6.0-rc.3/etcd-v3.6.0-rc.3-linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Find all etcd like files
+  ansible.builtin.find:
+    paths: /tmp/etcd-v3.6.0-rc.3-linux-amd64
+    patterns: 'etcd*' #TODO instead better to create regex for etcd and etcdctl
+    file_type: file
+  register: etcd_files
+
+- name: Copy etcd binaries to /usr/local/bin
+  ansible.builtin.copy:
+    src: "{{ item.path }}"
+    dest: "/usr/local/bin/"
+    owner: root
+    group: root
+    remote_src: true
+    mode: '0755'
+  loop: "{{ etcd_files.files }}"
+  become: true

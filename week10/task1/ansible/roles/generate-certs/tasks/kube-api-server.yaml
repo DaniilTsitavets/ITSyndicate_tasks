@@ -1,0 +1,47 @@
+---
+- name: Create kube-api-server private key
+  community.crypto.openssl_privatekey:
+    path: "{{ certificate_path }}/kube-api-server.key"
+    size: 4096
+    mode: "0600"
+
+- name: Create CSR for kube-api-server
+  community.crypto.openssl_csr:
+    path: "{{ certificate_path }}/kube-api-server.csr"
+    privatekey_path: "{{ certificate_path }}/kube-api-server.key"
+    CN: kubernetes
+    C: "{{ C }}"
+    ST: "{{ ST }}"
+    L: "{{ L }}"
+    basic_constraints:
+      - CA:FALSE
+    extended_key_usage:
+      - clientAuth
+      - serverAuth
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
+    key_usage_critical: true
+    subjectAltName:
+      - "IP:127.0.0.1"
+      - "IP:10.32.0.1"
+      - "DNS:kubernetes"
+      - "DNS:kubernetes.default"
+      - "DNS:kubernetes.default.svc"
+      - "DNS:kubernetes.default.svc.cluster"
+      - "DNS:kubernetes.svc.cluster.local"
+      - "DNS:server.kubernetes.local"
+      - "DNS:api-server.kubernetes.local"
+    create_subject_key_identifier: true
+
+
+- name: Create kube-api-server cert
+  community.crypto.x509_certificate:
+    path: "{{ certificate_path }}/kube-api-server.crt"
+    privatekey_path: "{{ certificate_path }}/kube-api-server.key"
+    csr_path: "{{ certificate_path }}/kube-api-server.csr"
+    provider: ownca
+    ownca_path: "{{ certificate_path }}/ca.crt"
+    ownca_privatekey_path: "{{ certificate_path }}/ca.key"
+    selfsigned_not_after: "+3650d"
+    mode: "0600"

@@ -1,0 +1,29 @@
+---
+- name: Read and save encoded CA cert content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/ca.crt"
+  register: ca_crt
+
+- name: Read and save encoded admin cert content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/admin.crt"
+  register: admin_crt
+
+- name: Read and save encoded admin key content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/admin.key"
+  register: admin_key
+
+- name: Create kubeconfig for admin
+  ansible.builtin.template:
+    src: kubeconfig.j2
+    dest: "{{ configs_files_path }}/admin.kubeconfig"
+    mode: '0600'
+  vars:
+    ca_content: "{{ ca_crt['content'] }}"
+    k8s_server_address: https://server.kubernetes.local:6443
+    k8s_user: admin
+    cluster_name: "{{ k8s_cluster_name }}"
+    context_name: "{{ configs_context_name }}"
+    client_certificate_content: "{{ admin_crt['content'] }}"
+    client_key_content: "{{ admin_key['content'] }}"

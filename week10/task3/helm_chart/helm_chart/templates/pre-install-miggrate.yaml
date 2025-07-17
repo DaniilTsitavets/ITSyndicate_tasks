@@ -1,0 +1,21 @@
+#For task completion, it will not work
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "project.name" . }}-migration
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["python", "manage.py", "migrate"]
+          envFrom:
+            - secretRef:
+                name: {{ include "project.name" . }}-secret
+            - configMapRef:
+                name: {{ include "project.name" . }}-configmap

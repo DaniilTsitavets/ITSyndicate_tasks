@@ -1,0 +1,40 @@
+---
+- name: "Create private key for {{node}}"
+  community.crypto.openssl_privatekey:
+    path: "{{ certificate_path }}/{{ node }}.key"
+    size: 4096
+    mode: "0600"
+
+- name: "Create CSR for {{node}} cert"
+  community.crypto.openssl_csr:
+    path: "{{ certificate_path }}/{{node}}.csr"
+    privatekey_path: "{{ certificate_path }}/{{node}}.key"
+    CN: system:node:{{node}}
+    O: system:nodes
+    C: "{{ C }}"
+    ST: "{{ ST }}"
+    L: "{{ L }}"
+    basic_constraints:
+      - CA:FALSE
+    extended_key_usage:
+      - serverAuth
+      - clientAuth
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
+    key_usage_critical: true
+    subjectAltName:
+      - "DNS:{{ node }}"
+      - IP:127.0.0.1
+    create_subject_key_identifier: true
+
+- name: "Create cert for {{ node }}"
+  community.crypto.x509_certificate:
+    path: "{{ certificate_path }}/{{ node }}.crt"
+    privatekey_path: "{{ certificate_path }}/{{ node }}.key"
+    csr_path: "{{ certificate_path }}/{{ node }}.csr"
+    provider: ownca
+    ownca_path: "{{ certificate_path }}/ca.crt"
+    ownca_privatekey_path: "{{ certificate_path }}/ca.key"
+    selfsigned_not_after: "+3650d"
+    mode: "0644"

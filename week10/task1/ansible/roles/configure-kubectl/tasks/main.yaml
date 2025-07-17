@@ -1,0 +1,23 @@
+---
+- name: Ensure control_plane node mapping is in /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ hostvars[item]['ansible_host'] }}   {{ item }}.kubernetes.local    {{ item }}"
+  loop: "{{ groups['control_plane'] }}"
+  become: true
+
+- name: Ensure .kube directory exists
+  ansible.builtin.file:
+    path: /home/{{ ansible_user_id }}/.kube
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Set admin.kubeconfig as default
+  ansible.builtin.copy:
+    src: "{{ configs_files_path }}/admin.kubeconfig"
+    dest: /home/{{ ansible_user_id }}/.kube/config
+    mode: '0600'
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"

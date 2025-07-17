@@ -1,0 +1,4 @@
+certificate_path: /etc/ssl/k8s_certs/
+C: LT
+ST: Vilnius
+L: Vilnius

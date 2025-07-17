@@ -1,0 +1,22 @@
+---
+- name: Add kubelet confs
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { src: kubelet-config.yaml.j2, dest: /var/lib/kubelet/kubelet-config.yaml }
+    - { src: kubelet.service.j2, dest: /etc/systemd/system/kubelet.service }
+  become: true
+
+- name: Copy kubelet required certs and config
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+  with_items:
+    - { src: "{{ configs_files_path }}/{{ inventory_hostname }}.kubeconfig", dest: /var/lib/kubelet/kubeconfig }
+    - { src: "{{ certificate_path }}/ca.crt", dest: /var/lib/kubelet/ca.crt }
+    - { src: "{{ certificate_path }}/{{ inventory_hostname }}.crt", dest: /var/lib/kubelet/kubelet.crt }
+    - { src: "{{ certificate_path }}/{{ inventory_hostname }}.key", dest: /var/lib/kubelet/kubelet.key }
+  become: true

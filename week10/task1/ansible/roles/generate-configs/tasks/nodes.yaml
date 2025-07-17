@@ -1,0 +1,29 @@
+---
+- name: Read and save encoded CA cert content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/ca.crt"
+  register: ca_crt
+
+- name: "Read and save encoded cert content of {{ node }}"
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/{{ node }}.crt"
+  register: node_crt
+
+- name: "Read and save encoded private key content of {{ node }}"
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/{{ node }}.key"
+  register: node_key
+
+- name: "Create kubeconfig for {{ node }}"
+  ansible.builtin.template:
+    src: kubeconfig.j2
+    dest: "{{ configs_files_path }}/{{ node }}.kubeconfig"
+    mode: '0600'
+  vars:
+    ca_content: "{{ ca_crt['content'] }}"
+    k8s_server_address: https://server.kubernetes.local:6443
+    k8s_user: system:node:{{ node }}
+    cluster_name: "{{ k8s_cluster_name }}"
+    context_name: "{{ configs_context_name }}"
+    client_certificate_content: "{{ node_crt['content'] }}"
+    client_key_content: "{{ node_key['content'] }}"

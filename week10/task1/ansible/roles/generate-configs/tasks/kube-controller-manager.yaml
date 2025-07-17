@@ -1,0 +1,29 @@
+---
+- name: Read and save encoded CA cert content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/ca.crt"
+  register: ca_crt
+
+- name: Read and save encoded kube-controller-manager cert content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/kube-controller-manager.crt"
+  register: kube_controller_manager_crt
+
+- name: Read and save encoded kube-controller-manager key content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/kube-controller-manager.key"
+  register: kube_controller_manager_key
+
+- name: Create kubeconfig for kube-controller-manager
+  ansible.builtin.template:
+    src: kubeconfig.j2
+    dest: "{{ configs_files_path }}/kube-controller-manager.kubeconfig"
+    mode: '0600'
+  vars:
+    ca_content: "{{ ca_crt['content'] }}"
+    k8s_server_address: https://server.kubernetes.local:6443
+    k8s_user: system:kube-controller-manager
+    cluster_name: "{{ k8s_cluster_name }}"
+    context_name: "{{ configs_context_name }}"
+    client_certificate_content: "{{ kube_controller_manager_crt['content'] }}"
+    client_key_content: "{{ kube_controller_manager_key['content'] }}"

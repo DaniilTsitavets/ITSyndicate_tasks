@@ -1,0 +1,16 @@
+#For task completion, there is no purpose of it, caz readiness and liveness exist
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "project.name" . }}-healthcheck
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: healthcheck
+          image: curlimages/curl:latest
+          command: ["sh", "-c", "curl -sf http://{{ include "project.name" . }}-svc:80/ || exit 1"]

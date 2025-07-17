@@ -1,0 +1,21 @@
+---
+- name: Create etcd required directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /etc/etcd
+    - /var/lib/etcd
+  become: yes
+
+- name: Copy required certs and key to /etc/etcd/
+  ansible.builtin.copy:
+    src: "{{ certificate_path }}/{{ item }}"
+    dest: "/etc/etcd/{{ item }}"
+    mode: '0644'
+  loop:
+    - ca.crt
+    - kube-api-server.key
+    - kube-api-server.crt
+  become: yes
