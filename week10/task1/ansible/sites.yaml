@@ -1,0 +1,50 @@
+---
+- name: Configure network
+  hosts: control_plane, worker_nodes
+  become: true
+  gather_facts: true
+  vars_files:
+    - vars.yaml
+  roles:
+    - setup-networking
+
+- name: Generate certificates and configs
+  hosts: jumpbox
+  vars_files:
+    - vars.yaml
+  roles:
+    - generate-certs
+    - generate-configs
+
+- name: Configure k8s control plane
+  hosts: control_plane
+  gather_facts: true
+  vars_files:
+    - vars.yaml
+  roles:
+    - bootstrap-etcd
+    - setup-control-plane
+
+- name: Configure worker nodes
+  hosts: worker_nodes
+  become: true
+  gather_facts: true
+  vars_files:
+    - vars.yaml
+  roles:
+    - setup-worker-nodes
+
+- name: Create kubectl config file
+  hosts: jumpbox
+  gather_facts: true
+  vars_files:
+    - vars.yaml
+  roles:
+    - configure-kubectl
+
+- name: Smoke test
+  hosts: jumpbox
+  vars_files:
+    - vars.yaml
+  roles:
+    - smoke-test

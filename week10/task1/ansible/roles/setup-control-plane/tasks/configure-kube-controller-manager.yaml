@@ -1,0 +1,18 @@
+---
+- name: Copy kube-controller-manager.kubeconfig to /var/lib/kubernetes/
+  ansible.builtin.copy:
+    src: "{{ configs_files_path }}/kube-controller-manager.kubeconfig"
+    dest: /var/lib/kubernetes/
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Create the kube-controller-manager.service systemd unit file
+  ansible.builtin.template:
+    src: kube-controller-manager.service.j2
+    dest: /etc/systemd/system/kube-controller-manager.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: true

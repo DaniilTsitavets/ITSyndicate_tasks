@@ -1,0 +1,29 @@
+---
+- name: Read and save encoded CA cert content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/ca.crt"
+  register: ca_crt
+
+- name: Read and save encoded kube-scheduler cert content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/kube-scheduler.crt"
+  register: kube_scheduler_crt
+
+- name: Read and save encoded kube-scheduler key content
+  ansible.builtin.slurp:
+    src: "{{ certificate_path }}/kube-scheduler.key"
+  register: kube_scheduler_key
+
+- name: Create kubeconfig for kube-scheduler
+  ansible.builtin.template:
+    src: kubeconfig.j2
+    dest: "{{ configs_files_path }}/kube-scheduler.kubeconfig"
+    mode: '0600'
+  vars:
+    ca_content: "{{ ca_crt['content'] }}"
+    k8s_server_address: https://server.kubernetes.local:6443
+    k8s_user: system:kube-scheduler
+    cluster_name: "{{ k8s_cluster_name }}"
+    context_name: "{{ configs_context_name }}"
+    client_certificate_content: "{{ kube_scheduler_crt['content'] }}"
+    client_key_content: "{{ kube_scheduler_key['content'] }}"

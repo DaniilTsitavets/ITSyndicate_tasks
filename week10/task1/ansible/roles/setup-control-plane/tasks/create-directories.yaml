@@ -1,0 +1,12 @@
+---
+- name: Create required Kubernetes directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  loop:
+    - /etc/kubernetes/config
+    - /var/lib/kubernetes

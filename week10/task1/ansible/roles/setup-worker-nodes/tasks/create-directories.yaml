@@ -1,0 +1,19 @@
+---
+- name: Create required directories
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - /etc/cni/net.d
+    - /tmp/containerd
+    - /opt/cni/bin
+    - /var/lib/kubelet
+    - /var/lib/kube-proxy
+    - /var/lib/kubernetes
+    - /var/run/kubernetes
+    - /tmp/crictl.d
+    - /tmp/cni-plugins
+  become: true

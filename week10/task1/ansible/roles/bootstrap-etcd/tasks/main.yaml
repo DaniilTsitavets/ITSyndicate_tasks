@@ -1,0 +1,4 @@
+---
+- import_tasks: download-binaries.yaml
+- import_tasks: configure-etcd.yaml
+- import_tasks: deploy-etcd.yaml

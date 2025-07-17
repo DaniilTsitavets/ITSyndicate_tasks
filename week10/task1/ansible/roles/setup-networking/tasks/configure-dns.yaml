@@ -1,0 +1,30 @@
+---
+- name: Configure static mappings for server
+  ansible.builtin.command: ip route add {{ k8s_subnets[item] }} via {{ hostvars[item]['ansible_host'] }}
+  loop: "{{ groups['worker_nodes'] }}"
+  when: inventory_hostname in groups['control_plane']
+  register: command_result
+  changed_when: command_result.rc == 0
+  failed_when: >
+    (('RTNETLINK answers: File exists' not in command_result.stderr) and (command_result.rc == 2)) or
+    (command_result.rc != 0 and command_result.rc != 2)
+
+- name: Configure static mappings for node
+  ansible.builtin.command: ip route add {{ k8s_subnets[item] }} via {{ hostvars[item]['ansible_host'] }}
+  loop: "{{ groups['worker_nodes'] | difference([inventory_hostname]) }}"
+  when: inventory_hostname in groups['worker_nodes']
+  register: command_result
+  changed_when: command_result.rc == 0
+  failed_when: >
+    (('RTNETLINK answers: File exists' not in command_result.stderr) and (command_result.rc == 2)) or
+    (command_result.rc != 0 and command_result.rc != 2)
+
+
+- name: Get network mappings from node
+  ansible.builtin.command: ip route
+  register: route_table
+  changed_when: route_table.rc == 0
+
+- name: Show network mappings
+  ansible.builtin.debug:
+    msg: "{{ route_table['stdout'] }}"

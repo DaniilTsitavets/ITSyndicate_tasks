@@ -1,0 +1,3 @@
+---
+- import_tasks: configure-hostnames.yaml
+- import_tasks: configure-dns.yaml

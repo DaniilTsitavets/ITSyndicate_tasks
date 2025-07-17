@@ -1,0 +1,10 @@
+---
+- name: Add containerd confs
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { src: containerd-config.toml.j2, dest: /etc/containerd/containerd-config.toml }
+    - { src: containerd.service.j2, dest: /etc/systemd/system/containerd.service }
+  become: true

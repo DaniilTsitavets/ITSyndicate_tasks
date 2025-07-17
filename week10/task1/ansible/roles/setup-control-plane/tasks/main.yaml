@@ -1,0 +1,8 @@
+---
+- import_tasks: create-directories.yaml
+- import_tasks: download-binaries.yaml
+- import_tasks: configure-kube-api.yaml
+- import_tasks: configure-kube-controller-manager.yaml
+- import_tasks: configure-scheduler.yaml
+- import_tasks: start-controller-services.yaml
+- import_tasks: configure-rbac.yaml

@@ -1,0 +1,10 @@
+---
+- name: Install os dependencies
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - socat
+    - conntrack
+    - ipset
+  become: true

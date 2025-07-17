@@ -1,0 +1,45 @@
+---
+- name: Download Kubernetes binaries
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "/usr/local/bin/{{ item.name }}"
+    mode: '0755'
+  loop: "{{ k8s_binaries }}"
+  become: true
+
+- name: Download and extract crictl
+  ansible.builtin.unarchive:
+    src: "{{ crictl_url }}"
+    dest: /usr/local/bin/
+    remote_src: true
+    mode: '0755'
+  become: true
+
+- name: Download and install runc
+  ansible.builtin.get_url:
+    url: "{{ runc_url }}"
+    dest: /usr/local/bin/runc
+    mode: '0755'
+  become: true
+
+- name: Download and extract CNI plugins
+  ansible.builtin.unarchive:
+    src: "{{ cni_plugins_url }}"
+    dest: /opt/cni/bin/
+    remote_src: true
+    mode: '0755'
+  become: true
+
+- name: Download and extract containerd
+  ansible.builtin.unarchive:
+    src: "{{ containerd_url }}"
+    dest: /tmp/containerd
+    remote_src: true
+  become: true
+
+- name: Move containerd binaries to /bin
+  ansible.builtin.shell: |
+    mv /tmp/containerd/bin/* /bin/
+  args:
+    creates: /bin/containerd
+  become: true

@@ -1,0 +1,20 @@
+- name: Ensure certificate directory exists
+  ansible.builtin.file:
+    path: "{{ certificate_path }}"
+    state: directory
+    mode: "0755"
+
+- import_tasks: ca.yaml
+- import_tasks: admin.yaml
+
+- name: Generate certs for all worker nodesz
+  include_tasks: nodes.yaml
+  vars:
+    node: "{{ item }}"
+  loop: "{{ groups['worker_nodes'] }}"
+
+- import_tasks: kube-proxy.yaml
+- import_tasks: kube-scheduler.yaml
+- import_tasks: kube-controller-manager.yaml
+- import_tasks: kube-api-server.yaml
+- import_tasks: service-accounts.yaml

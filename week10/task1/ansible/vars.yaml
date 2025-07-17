@@ -1,0 +1,10 @@
+---
+certificate_path: ~/k8s_certs
+configs_files_path: ~/kubeconfigs
+k8s_cluster_name: kubernetes-the-hard-way
+generate_configs_context_name: default
+k8s_cluster_cidr: 10.200.0.0/16
+k8s_subnets:
+  node-0: 10.200.0.0/24
+  node-1: 10.200.1.0/24
+smoke_test_nodeport: 32456

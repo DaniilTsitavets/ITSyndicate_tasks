@@ -1,0 +1,41 @@
+---
+- name: Create kube-controller-manager private key
+  community.crypto.openssl_privatekey:
+    path: "{{ certificate_path }}/kube-controller-manager.key"
+    size: 4096
+    mode: "0600"
+
+- name: Create CSR for kube-controller-manager
+  community.crypto.openssl_csr:
+    path: "{{ certificate_path }}/kube-controller-manager.csr"
+    privatekey_path: "{{ certificate_path }}/kube-controller-manager.key"
+    CN: system:kube-controller-manager
+    O: system:kube-controller-manager
+    C: "{{ C }}"
+    ST: "{{ ST }}"
+    L: "{{ L }}"
+    basic_constraints:
+      - CA:FALSE
+    extended_key_usage:
+      - clientAuth
+      - serverAuth
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
+    key_usage_critical: true
+    subjectAltName:
+      - IP:127.0.0.1
+      - DNS:kube-controller-manager
+    create_subject_key_identifier: true
+
+
+- name: Create service-accounts cert
+  community.crypto.x509_certificate:
+    path: "{{ certificate_path }}/kube-controller-manager.crt"
+    privatekey_path: "{{ certificate_path }}/kube-controller-manager.key"
+    csr_path: "{{ certificate_path }}/kube-controller-manager.csr"
+    provider: ownca
+    ownca_path: "{{ certificate_path }}/ca.crt"
+    ownca_privatekey_path: "{{ certificate_path }}/ca.key"
+    selfsigned_not_after: "+3650d"
+    mode: "0600"

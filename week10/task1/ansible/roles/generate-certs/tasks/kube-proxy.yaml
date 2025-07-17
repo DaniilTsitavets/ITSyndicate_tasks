@@ -1,0 +1,41 @@
+---
+- name: Create kube-proxy private key
+  community.crypto.openssl_privatekey:
+    path: "{{ certificate_path }}/kube-proxy.key"
+    size: 4096
+    mode: "0600"
+
+- name: Create CSR for kube-proxy
+  community.crypto.openssl_csr:
+    path: "{{ certificate_path }}/kube-proxy.csr"
+    privatekey_path: "{{ certificate_path }}/kube-proxy.key"
+    CN: system:kube-proxy
+    O: system:node-proxier
+    C: "{{ C }}"
+    ST: "{{ ST }}"
+    L: "{{ L }}"
+    basic_constraints:
+      - CA:FALSE
+    extended_key_usage:
+      - clientAuth
+      - serverAuth
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
+    key_usage_critical: true
+    subjectAltName:
+      - IP:127.0.0.1
+      - DNS:kube-proxy
+    create_subject_key_identifier: true
+
+
+- name: Create kube-proxy cert
+  community.crypto.x509_certificate:
+    path: "{{ certificate_path }}/kube-proxy.crt"
+    privatekey_path: "{{ certificate_path }}/kube-proxy.key"
+    csr_path: "{{ certificate_path }}/kube-proxy.csr"
+    provider: ownca
+    ownca_path: "{{ certificate_path }}/ca.crt"
+    ownca_privatekey_path: "{{ certificate_path }}/ca.key"
+    selfsigned_not_after: "+3650d"
+    mode: "0600"

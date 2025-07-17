@@ -1,0 +1,16 @@
+k8s_version: v1.32.3
+crictl_version: v1.32.0
+runc_version: v1.3.0-rc.1
+cni_plugins_version: v1.6.2
+containerd_version: 2.1.0-beta.0
+binary_arch: amd64
+
+k8s_binaries:
+  - { name: kubectl, url: "https://dl.k8s.io/{{ k8s_version }}/bin/linux/{{ binary_arch }}/kubectl" }
+  - { name: kubelet, url: "https://dl.k8s.io/{{ k8s_version }}/bin/linux/{{ binary_arch }}/kubelet" }
+  - { name: kube-proxy, url: "https://dl.k8s.io/{{ k8s_version }}/bin/linux/{{ binary_arch }}/kube-proxy" }
+
+runc_url: "https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.{{ binary_arch }}"
+crictl_url: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-{{ binary_arch }}.tar.gz"
+cni_plugins_url: "https://github.com/containernetworking/plugins/releases/download/{{ cni_plugins_version }}/cni-plugins-linux-{{ binary_arch }}-{{ cni_plugins_version }}.tgz"
+containerd_url: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ binary_arch }}.tar.gz"
