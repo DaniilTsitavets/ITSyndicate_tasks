@@ -42,3 +42,11 @@ resource "local_file" "inventory" {
   })
   filename = "../ansible/inventory.ini"
 }
+
+resource "local_file" "ansible_vars" {
+  content = templatefile("${path.module}/vars.tpl", {
+    vpc_cidr_block=module.vpc.vpc_cidr_block
+    db_host=module.db.private_ip
+  })
+  filename = "${path.module}/../ansible/"
+}
