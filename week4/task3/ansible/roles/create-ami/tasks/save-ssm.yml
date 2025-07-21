@@ -5,4 +5,3 @@
     value: "{{ created_ami.image_id }}"
     string_type: "String"
     region: "{{ region }}"
-  notify: Terminate instance
