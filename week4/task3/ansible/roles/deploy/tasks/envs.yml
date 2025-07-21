@@ -1,0 +1,6 @@
+---
+- name: Generate .env file
+  ansible.builtin.template:
+    src: ../templates/app.env.j2
+    dest: "{{ env_file_path }}"
+    mode: 0640
