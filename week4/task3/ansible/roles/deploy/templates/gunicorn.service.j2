@@ -1,0 +1,17 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+EnvironmentFile={{ env_file_path }}
+WorkingDirectory={{ django_project_dir }}
+ExecStart={{ django_project_dir }}/venv/bin/gunicorn mysite.wsgi:application \
+--bind 0.0.0.0:8000 \
+--workers 3 \
+--chdir /opt/sample-django
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,8 @@
+---
+- name: Install PostgreSQL and psycopg2
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - python3-psycopg2
+    state: present
+    update_cache: yes

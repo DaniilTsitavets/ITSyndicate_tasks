@@ -1,0 +1,14 @@
+- name: Wait for SSH to become available
+  ansible.builtin.wait_for:
+    host: "{{ public_ip }}"
+    port: 22
+    timeout: 60
+    state: started
+
+- name: Add host to inventory
+  add_host:
+    name: ami-temp
+    ansible_host: "{{ public_ip }}"
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: ~/.ssh/ansible-key-pair.pem
+    groups: temp

@@ -1,0 +1,5 @@
+---
+- import_tasks: pull.yml
+- import_tasks: envs.yml
+- import_tasks: gunicorn-setup.yml
+- import_tasks: migration.yml

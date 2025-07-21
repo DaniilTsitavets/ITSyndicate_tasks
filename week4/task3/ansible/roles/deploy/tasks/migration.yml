@@ -1,0 +1,20 @@
+---
+- name: Ensure virtualenv is installed
+  ansible.builtin.pip:
+    name: virtualenv
+    executable: pip3
+
+- name: Install python deps from requirements.txt
+  ansible.builtin.pip:
+    requirements: "{{ django_project_dir }}/requirements.txt"
+    virtualenv: "{{ django_project_dir }}/venv"
+
+- name: Apply Django application
+  ansible.builtin.command: "{{ django_project_dir }}/venv/bin/python manage.py migrate"
+  args:
+    chdir: "{{ django_project_dir }}"
+  notify:
+    - restart gunicorn
+    - restart nginx
+  environment:
+    DATABASE_URL: "{{ db_url }}"

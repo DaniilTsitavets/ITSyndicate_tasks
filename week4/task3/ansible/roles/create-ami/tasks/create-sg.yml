@@ -1,0 +1,14 @@
+- name: Create security group
+  amazon.aws.ec2_group:
+    name: create-ami-sg
+    vpc_id: "{{ vpc_info.vpcs[0].vpc_id }}"
+    region: "{{ region }}"
+    description: "SG for ami connection"
+    rules:
+      - proto: tcp
+        ports: [22]
+        cidr_ip: 0.0.0.0/0
+    rules_egress:
+      - proto: -1
+        cidr_ip: 0.0.0.0/0
+  register: sg_info

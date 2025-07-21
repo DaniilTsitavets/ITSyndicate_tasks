@@ -1,0 +1,7 @@
+---
+- name: Deploy Postgresql database
+  hosts: db
+  become: true
+  remote_user: ubuntu
+  roles:
+    - postgres-setup

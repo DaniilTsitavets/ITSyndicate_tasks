@@ -1,0 +1,9 @@
+- name: Create AMI from instance
+  amazon.aws.ec2_ami:
+    instance_id: "{{ instance_id }}"
+    name: "{{ ami_name }}"
+    wait: true
+    region: "{{ region }}"
+    tags:
+      Purpose: django-template
+  register: created_ami

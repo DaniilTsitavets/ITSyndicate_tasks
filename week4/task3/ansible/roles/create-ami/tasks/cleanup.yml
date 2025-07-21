@@ -1,0 +1,6 @@
+- name: Terminate instance
+  amazon.aws.ec2_instance:
+    instance_ids: ["{{ instance_id }}"]
+    state: absent
+    region: "{{ region }}"
+  delegate_to: localhost

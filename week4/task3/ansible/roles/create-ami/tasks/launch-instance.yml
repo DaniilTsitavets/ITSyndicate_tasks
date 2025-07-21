@@ -1,0 +1,16 @@
+- name: Launch temporary instance
+  amazon.aws.ec2_instance:
+    name: ami-builder
+    key_name: ansible-key-pair
+    instance_type: "{{ instance_type }}"
+    image_id: "{{ ami_source }}"
+    vpc_subnet_id: "{{ subnet_id }}"
+    security_group: "{{ sg_info.group_id }}"
+    region: "{{ region }}"
+    count: 1
+    wait: yes
+  register: ec2_instance
+
+- set_fact:
+    instance_id: "{{ ec2_instance.instances[0].instance_id }}"
+    public_ip: "{{ ec2_instance.instances[0].public_ip_address }}"
