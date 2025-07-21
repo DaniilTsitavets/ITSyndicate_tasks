@@ -1,0 +1,17 @@
+- name: Get default VPC
+  amazon.aws.ec2_vpc_net_info:
+    filters:
+      is-default: true
+    region: "{{ region }}"
+  register: vpc_info
+
+- name: Get subnets in default VPC
+  amazon.aws.ec2_vpc_subnet_info:
+    filters:
+      vpc-id: "{{ vpc_info.vpcs[0].vpc_id }}"
+    region: "{{ region }}"
+  register: subnet_info
+
+- name: Set subnet_id
+  ansible.builtin.set_fact:
+    subnet_id: "{{ subnet_info.subnets[0].id }}"
