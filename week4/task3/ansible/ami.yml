@@ -1,0 +1,5 @@
+---
+- name: Create AMI
+  hosts: localhost
+  roles:
+    - create-ami

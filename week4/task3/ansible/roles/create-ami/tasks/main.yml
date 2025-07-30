@@ -1,0 +1,9 @@
+---
+- import_tasks: get-subnet.yml
+- import_tasks: create-sg.yml
+- import_tasks: launch-instance.yml
+- import_tasks: wait-ssh.yml
+- import_tasks: configure-instance.yml
+- import_tasks: create-ami.yml
+- import_tasks: save-ssm.yml
+- import_tasks: cleanup.yml

@@ -1,0 +1,7 @@
+- name: Save AMI ID to SSM parameter store
+  community.aws.aws_ssm_parameter_store:
+    name: "{{ ssm_param_name }}"
+    description: Prepared AMI ID
+    value: "{{ created_ami.image_id }}"
+    string_type: "String"
+    region: "{{ region }}"

@@ -1,0 +1,16 @@
+django_project_dir: /opt/sample-django
+django_repo_url: "https://github.com/DaniilTsitavets/sample-django.git"
+django_branch: "feature/week4"
+
+env_file_path: "{{ django_project_dir }}/.env"
+
+django_project_root: /opt/sample-django
+upstream_host: 127.0.0.1
+upstream_port: 8000
+domain_name: "_"
+
+db_user: "postgres"
+db_password: "password"
+db_name: "db"
+secret_key: "secret_key"
+db_url: "postgres://{{ db_user }}:{{ db_password }}@{{ db_host }}:5432/{{ db_name }}"

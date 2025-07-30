@@ -1,0 +1,33 @@
+---
+- name: Ensure PostgreSQL is started
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Create DB user
+  community.postgresql.postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+  become_user: postgres
+
+- name: Create DB
+  community.postgresql.postgresql_db:
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+  become_user: postgres
+
+- name: Configure listen_addresses in postgresql.conf
+  ansible.builtin.lineinfile:
+    path: /etc/postgresql/14/main/postgresql.conf
+    regexp: '^#?listen_addresses'
+    line: "listen_addresses = '*'"
+  become_user: postgres
+
+- name: Allow access in pg_hba.conf
+  ansible.builtin.lineinfile:
+    path: /etc/postgresql/14/main/pg_hba.conf
+    line: "host    all           all           {{ vpc_cidr_block }}           md5"
+    insertafter: EOF
+  become_user: postgres
+  notify: restart PostgreSQL
