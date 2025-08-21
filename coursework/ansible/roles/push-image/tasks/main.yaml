@@ -1,0 +1,4 @@
+---
+- import_tasks: get-ecr.yaml
+- import_tasks: build-image.yaml
+- import_tasks: push-image.yaml

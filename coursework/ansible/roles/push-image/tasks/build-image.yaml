@@ -1,0 +1,11 @@
+---
+- name: Log into AWS ECR docker registry
+  ansible.builtin.shell: "aws ecr get-login-password --region {{ region }} | docker login --username AWS --password-stdin {{ ecr_repo_url }}"
+  when: ecr_repo_url is defined and ecr_repo_url | length > 0
+
+- name: Build and tag app image
+  community.docker.docker_image_build:
+    name: "{{ ecr_repo_url }}"
+    path: "{{ playbook_dir }}/../app/"
+    dockerfile: "Dockerfile"
+    rebuild: "always"

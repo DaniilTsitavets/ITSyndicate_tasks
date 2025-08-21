@@ -1,0 +1,14 @@
+---
+- name: Get ecr
+  community.aws.ecs_ecr:
+    name: "{{ env }}-itsyndicate/coursework"
+    region: "{{ region }}"
+  register: ecr_repo_info
+
+- name: Set ECR repository name fact
+  set_fact:
+    ecr_repo_name: "{{ ecr_repo_info.repository.repositoryName }}"
+
+- name: Set ECR repository URL fact
+  set_fact:
+    ecr_repo_url: "{{ ecr_repo_info.repository.repositoryUri }}"

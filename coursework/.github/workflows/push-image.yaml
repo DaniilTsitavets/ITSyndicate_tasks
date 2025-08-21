@@ -1,0 +1,31 @@
+#Use this pipeline only for the first deploy
+name: Push image to ECR
+
+on:
+    workflow_dispatch:
+      inputs:
+        env:
+          description: 'Environment to deploy'
+          required: true
+          default: 'dev'
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Install Ansible
+        run: pip install ansible boto3 botocore
+
+      - name: Run Ansible Playbook
+        run: ansible-playbook deploy.yml --extra-vars "env=${{ github.event.inputs.env }}"
+        working-directory: ansible
