@@ -1,0 +1,55 @@
+---
+- name: Get VPC info
+  amazon.aws.ec2_vpc_net_info:
+    region: "{{ region }}"
+    filters:
+      "tag:Name": "{{ env }}-vpc"
+  register: vpc_info
+
+- name: Get public subnets
+  amazon.aws.ec2_vpc_subnet_info:
+    region: "{{ region }}"
+    filters:
+      vpc-id: "{{ vpc_info.vpcs[0].vpc_id }}"
+      "tag:Name": "{{ env }}-vpc-public-*"
+  register: subnets_info
+
+- name: Get migration security group
+  amazon.aws.ec2_security_group_info:
+    region: "{{ region }}"
+    filters:
+      "tag:Name": "{{ env }}-migrate-task-definition-sg"
+  register: migrate_sg_info
+
+- name: Get collectstatic security group
+  amazon.aws.ec2_security_group_info:
+    region: "{{ region }}"
+    filters:
+      "tag:Name": "{{ env }}-collectstatic-task-definition-sg"
+  register: collectstatic_sg_info
+
+- name: Get task definition for migrations
+  community.aws.ecs_taskdefinition_info:
+    task_definition: "{{ env }}-migrate-task-definition"
+    region: "{{ region }}"
+  register: migrate_task_def
+
+- name: Get task definition for collectstatic
+  community.aws.ecs_taskdefinition_info:
+    task_definition: "{{ env }}-collectstatic-task-definition"
+    region: "{{ region }}"
+  register: collectstatic_task_def
+
+- name: Get ecr
+  community.aws.ecs_ecr:
+    name: "{{ env }}-itsyndicate/coursework"
+    region: "{{ region }}"
+  register: ecr_repo_info
+
+- name: Set ECR repository name fact
+  set_fact:
+    ecr_repo_name: "{{ ecr_repo_info.repository.repositoryName }}"
+
+- name: Set ECR repository URL fact
+  set_fact:
+    ecr_repo_url: "{{ ecr_repo_info.repository.repositoryUri }}"

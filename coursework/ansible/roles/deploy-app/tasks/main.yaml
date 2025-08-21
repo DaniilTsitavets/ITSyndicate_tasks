@@ -1,0 +1,7 @@
+---
+- import_tasks: get_aws_resources.yaml
+- import_tasks: build-image.yaml
+- import_tasks: push-image.yaml
+- import_tasks: collectstatic.yaml
+- import_tasks: migrations.yaml
+- import_tasks: update-lambda.yaml

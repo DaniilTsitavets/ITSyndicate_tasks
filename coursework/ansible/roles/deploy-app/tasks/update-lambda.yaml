@@ -1,0 +1,28 @@
+---
+- name: Get image digest by tag
+  ansible.builtin.command: >
+    aws ecr describe-images
+    --repository-name {{ ecr_repo_name }}
+    --region {{ region }}
+    --image-ids imageTag=latest
+    --query "imageDetails[0].imageDigest"
+    --output text
+  register: latest_digest
+  changed_when: false
+
+- name: Build full image URI with digest
+  ansible.builtin.set_fact:
+    lambda_image_uri: "{{ ecr_repo_url }}@{{ latest_digest.stdout }}"
+
+- name: Get lambda iam role
+  amazon.aws.iam_role_info:
+    name: "{{ env }}-lambda"
+  register: lambda_raw_iam_role
+
+- name: Update Lambda function with latest image
+  amazon.aws.lambda:
+    state: "present"
+    name: "{{ env }}-lambda"
+    image_uri: "{{ lambda_image_uri }}"
+    region: "{{ region }}"
+    role: "{{ lambda_raw_iam_role.iam_roles[0].arn }}"

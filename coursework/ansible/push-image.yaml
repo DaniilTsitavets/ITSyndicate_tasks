@@ -1,0 +1,12 @@
+---
+- name: Push image to ECR for first deploy
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - push-image
+  collections:
+    - amazon.aws
+    - community.aws
+
+  vars:
+    region: "eu-north-1"

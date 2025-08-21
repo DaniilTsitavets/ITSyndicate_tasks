@@ -1,0 +1,4 @@
+---
+- name: Push app image
+  community.docker.docker_image_push:
+    name: "{{ ecr_repo_url }}"

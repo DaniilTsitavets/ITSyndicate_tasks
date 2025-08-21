@@ -1,0 +1,14 @@
+---
+- name: Run migrations
+  community.aws.ecs_task:
+    cluster: "{{ env }}-ecs-fargate-cluster"
+    operation: "run"
+    task_definition: "{{ env }}-migrate-task-definition"
+    launch_type: FARGATE
+    count: 1
+    network_configuration:
+      assign_public_ip: true
+      security_groups: "{{ migrate_sg_info.security_groups[0].group_id }}"
+      subnets: "{{ subnets_info.subnets | map(attribute='subnet_id') | list }}"
+    started_by: "ansible"
+  register: migrate_task
